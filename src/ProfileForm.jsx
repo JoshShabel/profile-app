@@ -1,47 +1,91 @@
 /*
 import PropTypes from 'prop-types';
 */
-import React, {useState} from "react";
+import {useState} from "react";
 /*import styles from './ProfileForm.module.css'*/
 
 function ProfileForm() {
-    const [state, setState] = React.useState({
+    const [state, setState] = useState({
         name: "",
+        title: "",
         email: "",
+        bio: "",
+        image: null
     })
+    const [errors, setErrors] = useState(
+        {
+            image: "",
+            general: ""
+        }
+    )
 
     const handleSubmit = async(e) => {
         e.preventDefault();
         const formData = new FormData();
-        formData.append('name', state.name);
-        formData.append('email', state.email);
-        fetch('/profile-app/src/create-table.php', {
+        formData.append('name', state.name.trim());
+        formData.append('email', state.email.trim());
+        formData.append('bio', state.title.trim());
+        formData.append('title', state.bio.trim());
+        if (state.image) formData.append("image", state.image);
+        /*        fetch('src/phpFiles/create-table.php', {
+                        method: 'POST',
+                        redirect: 'follow',
+                        body: new URLSearchParams(formData)
+                    }
+                )
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                    .catch(error => console.log('Error:', error));
+
+                fetch('src/phpFiles/send-data.php', {
+                        method: 'POST',
+                        redirect: 'follow',
+                        body: new URLSearchParams(formData)
+                    }
+                )
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                    .catch(error => console.log('Error:', error))
+
+            }*/
+        try{
+            const response = await fetch('https://web.ics.purdue.edu/~jshabel/send-data.php', {
+                    method: 'POST',
+                    body: formData
+                }
+            );
+            const result = await response.json();
+            console.log(result.message);
+        }catch(error){
+            console.log(error);
+        }
+/*        fetch('https://web.ics.purdue.edu/~jshabel/create-table.php', {
                 method: 'POST',
                 redirect: 'follow',
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
             body: new URLSearchParams(formData)
         }
         )
             .then(response => response.json())
             .then(data => console.log(data))
-            .catch(error => console.log('Error:', error));
+            .catch(error => console.log('Error:', error));*/
 
-            fetch('/profile-app/src/send-data.php', {
-                method: 'POST',
-                    redirect: 'follow',
-                    body: new URLSearchParams(formData)
-            }
-            )
-                .then(response => response.json())
-                .then(data => console.log(data))
-                .catch(error => console.log('Error:', error))
+
 
     }
     function handleChange(e) {
-        const value = e.target.value;
-        setState({
-            ...state,
-            [e.target.name]: value
-        });
+        if (e.target.name === "image") {
+            const file = e.target.files[0];
+            if (file.size > 2000000){ // Not necessary, but I'd like to check clientside just for practice
+                setErrors({...errors, image: "Image must be less than 2MB."});
+            }
+            setState({...state, image: e.target.files[0]});
+        }
+        else {
+            setState({...state, [e.target.name]: e.target.value});
+        }
     }
     return (
         <div>
@@ -62,6 +106,24 @@ function ProfileForm() {
                     onChange={handleChange}
                     required
                 />
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Title"
+                    value={state.title}
+                    onChange={handleChange}
+                    required
+                />
+                <textarea
+                    name="bio"
+                    placeholder="Enter description"
+                    maxLength={200}
+                    value={state.bio}
+                    onChange={handleChange}
+                    required
+                ></textarea>
+                <label htmlFor="image">Choose a profile picture:</label>
+                    <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp, image/avif" onChange={handleChange}/>
                 <button type="submit">Send</button>
             </form>
         </div>
