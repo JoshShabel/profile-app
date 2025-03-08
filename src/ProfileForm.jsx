@@ -17,9 +17,9 @@ function ProfileForm() {
         formData.append('email', state.email);
         fetch('/profile-app/src/create-table.php', {
                 method: 'POST',
-                body: formData,
-                headers: {}
-            }
+                redirect: 'follow',
+            body: new URLSearchParams(formData)
+        }
         )
             .then(response => response.json())
             .then(data => console.log(data))
@@ -27,8 +27,8 @@ function ProfileForm() {
 
             fetch('/profile-app/src/send-data.php', {
                 method: 'POST',
-                body: formData,
-                headers: {}
+                    redirect: 'follow',
+                    body: new URLSearchParams(formData)
             }
             )
                 .then(response => response.json())
