@@ -1,22 +1,23 @@
-import React, {useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 /*import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'*/
 import styles from './App.module.css'
-import CardOne from "./CardOne.jsx";
 import Header from './Header.jsx';
 import Introduction from "./Introduction.jsx";
-import CardTwo from "./CardTwo.jsx";
 import Wrapper from "./Wrapper.jsx";
-import CardThree from "./CardThree.jsx";
+import Card from "./Card.jsx";
 import Navbar from './Navbar.jsx';
 import ProfileForm from "./ProfileForm.jsx";
 
 
-
 function App() {
+    const [loading, setLoading] = useState(true);
     const [textInput, setTextInput] = useState("");
-    const [job, setJob] = React.useState('None Chosen');
+    const [job, setJob] = useState('None Chosen');
     const [modeToggle, setModeToggle] = useState(true);
+    const [formState, setFormState] = useState(0);
+ //  const [cards, setCards] = useState([]);
+    const cards = useRef(null);
     const handleChange = (event) => {
         setJob(event.target.value);
     };
@@ -24,6 +25,22 @@ function App() {
         setModeToggle(prevModeToggle => !prevModeToggle);
         console.log(modeToggle);
     }
+
+    function handleFormState() {
+setFormState(formState + 1);
+        }
+
+    async function fetchData(){
+        const response = await fetch("https://web.ics.purdue.edu/~jshabel/fetch-data.php");
+        const result = await response.json();
+        cards.current = result.map(obj => Object.values(obj));
+        setLoading(false);
+    }
+
+    useEffect( () => {
+
+        fetchData();
+    }, [formState, loading]);
 
     return (
         <>
@@ -42,7 +59,7 @@ function App() {
                     "id vestibulum enim luctus dignissim. Sed venenatis nisl sed justo vulputate ultricies. " +
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "}/>
 
-                <ProfileForm></ProfileForm>
+                <ProfileForm handleFormState={handleFormState}></ProfileForm>
 
                 <Wrapper>
                     <h4>Options</h4>
@@ -66,9 +83,12 @@ function App() {
                         () => {setTextInput("");setJob("None Chosen");}
                 }>Reset</button>
                 <div className={modeToggle ? styles.darkCardDisplayArea : styles.lightCardDisplayArea}>
-                    <CardOne textFilter={textInput} job={job}/>
-                    <CardTwo textFilter={textInput} job={job}/>
-                    <CardThree textFilter={textInput} job={job}/>
+                    {
+                        loading ? null : cards.current.map((i, index) => {
+                        return (
+                            <Card key={index} arr={i} textFilter={textInput} job={job}/>
+                        );
+                    })}
                 </div>
             </div>
             </>

@@ -2,9 +2,11 @@
 import PropTypes from 'prop-types';
 */
 import {useState} from "react";
+import PropTypes from "prop-types";
 /*import styles from './ProfileForm.module.css'*/
 
-function ProfileForm() {
+
+function ProfileForm({handleFormState}) {
     const [state, setState] = useState({
         name: "",
         title: "",
@@ -18,6 +20,7 @@ function ProfileForm() {
             general: ""
         }
     )
+
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -59,6 +62,8 @@ function ProfileForm() {
         }catch(error){
             console.log(error);
         }
+
+        handleFormState();
 /*        fetch('https://web.ics.purdue.edu/~jshabel/create-table.php', {
                 method: 'POST',
                 redirect: 'follow',
@@ -71,9 +76,6 @@ function ProfileForm() {
             .then(response => response.json())
             .then(data => console.log(data))
             .catch(error => console.log('Error:', error));*/
-
-
-
     }
     function handleChange(e) {
         if (e.target.name === "image") {
@@ -132,7 +134,7 @@ function ProfileForm() {
 }
 
 ProfileForm.propTypes = {
-
+    handleFormState: PropTypes.func
 }
 
 export default ProfileForm;
