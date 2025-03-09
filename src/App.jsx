@@ -34,13 +34,15 @@ setFormState(formState + 1);
         const response = await fetch("https://web.ics.purdue.edu/~jshabel/fetch-data.php");
         const result = await response.json();
         cards.current = result.map(obj => Object.values(obj));
-        setLoading(false);
+        if (loading === true){
+            setLoading(false);
+        }
     }
 
     useEffect( () => {
 
         fetchData();
-    }, [formState, loading]);
+    }, [formState, loading]); // How to properly clear missing dependency warning? If I put fetchdata here, it refreshes whenever i change the dropdown
 
     return (
         <>

@@ -20,8 +20,13 @@
 .cardDisplayArea{
   padding: 10px 20px;
   margin-top: 20px;
-  height: 440px;
-  display:flex; flex-direction:row;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  border-radius: 25px;
+}
+
+.cardDisplayArea Card {
+  padding: 10px 20px;
 }
 
 .darkCardDisplayArea{

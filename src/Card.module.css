@@ -1,15 +1,15 @@
 .cardStyle{
-    width: 300px;
-    height: 370px;
     background-color: #CFB991;
     padding: 10px 20px;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
     margin-top: 20px;
+    margin-bottom: 20px;
     border-radius: 25px;
     animation: fade-in 0.5s;
     transition: transform 1s ease-out;
+    margin-left: 10px;
+    margin-right: 10px;
+    line-height: 60%;
 }
 
 @keyframes fade-in {
